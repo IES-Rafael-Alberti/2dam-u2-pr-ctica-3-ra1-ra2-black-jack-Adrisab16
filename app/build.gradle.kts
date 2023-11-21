@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.pmdm.blackjack"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.pmdm.blackjack"
