@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -45,46 +46,45 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainView() {
-    MenuView()
-}
-
+fun MainView(){MenuView()}
 @Composable
 fun MenuView(){
     var nav by remember {mutableStateOf(0)}
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .paint(
-            painter = painterResource(id = R.drawable.fondomenu),
-            contentScale = ContentScale.FillHeight
-        ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center){
-        Text(text = "BlackJack",
-            modifier = Modifier
-            .padding(40.dp),
-            fontWeight = FontWeight.Bold)
-        //Botón para jugar 1 vs 1:
-        Button(onClick = {nav = 1}, modifier = Modifier
-            .padding(40.dp)
-            .width(250.dp)
-            .height(80.dp)){Text(text = "Jugador VS Jugador", color = Color.White)}
-        //Botón para jugar 1 vs CPU:
-        Button(onClick = {nav = 2}, modifier = Modifier
-            .padding(40.dp)
-            .width(250.dp)
-            .height(80.dp),
+    if (nav == 0){
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .paint(
+                painter = painterResource(id = R.drawable.fondomenu),
+                contentScale = ContentScale.FillHeight
+            ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center){
+            Text(text = "BlackJack",
+                modifier = Modifier
+                    .padding(40.dp),
+                fontWeight = FontWeight.Bold)
+            //Botón para jugar 1 vs 1:
+            Button(onClick = {nav = 1}, modifier = Modifier
+                .padding(40.dp)
+                .width(250.dp)
+                .height(80.dp)){Text(text = "Jugador VS Jugador", color = Color.White)}
+            //Botón para jugar 1 vs CPU:
+            Button(onClick = {nav = 2}, modifier = Modifier
+                .padding(40.dp)
+                .width(250.dp)
+                .height(80.dp),
             ){Text(text = "Jugador VS CPU", color = Color.White)}
-        //Botón para salir
-        Button(onClick = {nav = 3}, modifier = Modifier
-            .padding(40.dp)
-            .width(250.dp)
-            .height(80.dp)){Text(text = "SALIR", color = Color.White)}
-        when(nav){
-            1->{JugadorVsCpu()}
-            2->{JugadorVsJugador()}
-            3->{android.os.Process.killProcess(android.os.Process.myPid())}
+            //Botón para salir
+            Button(onClick = {nav = 3}, modifier = Modifier
+                .padding(40.dp)
+                .width(250.dp)
+                .height(80.dp)){Text(text = "SALIR", color = Color.White)}
         }
+    }
+    when(nav){
+        1->{JugadorVsJugador()}
+        2->{JugadorVsCpu()}
+        3->{android.os.Process.killProcess(android.os.Process.myPid())}
     }
 }
 
@@ -92,10 +92,28 @@ fun MenuView(){
 fun JugadorVsCpu(){}
 
 @Composable
-fun JugadorVsJugador(){}
+fun JugadorVsJugador(){
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .paint(
+            painter = painterResource(id = R.drawable.fondojuego),
+            contentScale = ContentScale.FillHeight
+        ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        ){
+        Row {
+            Button(onClick = { /*TODO*/ }) {
+
+            }
+            Button(onClick = { /*TODO*/ }) {
+
+            }
+        }
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    BlackJackTheme { MenuView()}
+    BlackJackTheme {JugadorVsJugador()}
 }
