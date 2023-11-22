@@ -4,7 +4,7 @@ package com.pmdm.blackjack
  * Clase baraja, donde podremos crear una baraja nueva, podremos barajar las cartas y mostrarlas:
  */
 class Baraja {
-    companion object{ // Usamos el Companion Object para no tener que inicializar las variablesq directamente en el constructor primario
+    companion object{ // Usamos el Companion Object para no tener que inicializar las variables directamente en el constructor primario
         private val cardlist : ArrayList<Carta> = arrayListOf()
         private var size = 0
         init {newDeck();shuffle()}

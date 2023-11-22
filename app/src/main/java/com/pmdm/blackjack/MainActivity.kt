@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,12 +19,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -65,18 +68,28 @@ fun MenuView(){
                 fontWeight = FontWeight.Bold)
             //Botón para jugar 1 vs 1:
             Button(onClick = {nav = 1}, modifier = Modifier
-                .padding(40.dp)
+                .padding(50.dp)
                 .width(250.dp)
                 .height(80.dp)){Text(text = "Jugador VS Jugador", color = Color.White)}
             //Botón para jugar 1 vs CPU:
             Button(onClick = {nav = 2}, modifier = Modifier
-                .padding(40.dp)
+                .padding(20.dp)
                 .width(250.dp)
                 .height(80.dp),
             ){Text(text = "Jugador VS CPU", color = Color.White)}
-            //Botón para salir
+            //Botón para jugar el blackjack clásico:
             Button(onClick = {nav = 3}, modifier = Modifier
-                .padding(40.dp)
+                .padding(20.dp)
+                .width(250.dp)
+                .height(80.dp)){Text(text = "BlackJack Classic", color = Color.White)}
+            //Botón para entrar al modo entrenamiento:
+            Button(onClick = {nav = 4}, modifier = Modifier
+                .padding(20.dp)
+                .width(250.dp)
+                .height(80.dp)){Text(text = "Modo Entrenamiento", color = Color.White)}
+            //Botón para salir:
+            Button(onClick = {nav = 5}, modifier = Modifier
+                .padding(20.dp)
                 .width(250.dp)
                 .height(80.dp)){Text(text = "SALIR", color = Color.White)}
         }
@@ -84,15 +97,24 @@ fun MenuView(){
     when(nav){
         1->{JugadorVsJugador()}
         2->{JugadorVsCpu()}
-        3->{android.os.Process.killProcess(android.os.Process.myPid())}
+        3->{ClassicGame()}
+        4->{TrainingMode()}
+        5->{android.os.Process.killProcess(android.os.Process.myPid())} // Esto hace que la aplicación se cierre, matando todos los porcesos en funcionamiento
     }
 }
 
+/**
+ * Este modo de juego consistirá en un entrenamiento para entender las normas del
+ * juego e implementar el funcionamiento básico del juego BlackJack para luego
+ * implementar modos más complejos:
+ */
 @Composable
-fun JugadorVsCpu(){}
-
-@Composable
-fun JugadorVsJugador(){
+fun TrainingMode(){
+    val j = Jugador()
+    var revealcard1 by rememberSaveable {mutableStateOf("reverso")}
+    var revealcard2 by rememberSaveable {mutableStateOf("reverso")}
+    val context = LocalContext.current
+    var start by remember {mutableStateOf(false)}
     Column(modifier = Modifier
         .fillMaxSize()
         .paint(
@@ -100,20 +122,63 @@ fun JugadorVsJugador(){
             contentScale = ContentScale.FillHeight
         ),
         horizontalAlignment = Alignment.CenterHorizontally,
-        ){
-        Row {
-            Button(onClick = { /*TODO*/ }) {
+    ){
+        Column(modifier = Modifier
+            .padding(bottom = 10.dp)
+            .padding(20.dp)
+            .fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally) {
 
+            //Título:
+            Row {
+                Text(text = "MODO ENTRENAMIENTO", Modifier.padding(30.dp), color = Color.White)
             }
-            Button(onClick = { /*TODO*/ }) {
-
+            //Fila para las cartas:
+            Row(Modifier.padding(20.dp)){
+                if (!start){
+                    Button(onClick = { start = true }, modifier = Modifier
+                        .padding(10.dp)
+                        .padding(bottom = 20.dp)
+                        .width(200.dp)
+                        .height(80.dp)) { Text(text = "COMENZAR")}
+                }else{
+                    Box {revealcard1 = j.pedircarta(context)}
+                    Box {revealcard2 = j.pedircarta(context)}
+                }
+            }
+            //Fila para los botones de decisión:
+            Row {
+                if(!start){
+                    //Si no se ha pulsado el boton comenzar, los botones de pedir carta y plantarse no existirán
+                }else{
+                    Button(onClick = {j.pedircarta(context)}, modifier = Modifier
+                        .padding(10.dp)
+                        .padding(bottom = 20.dp)
+                        .width(120.dp)
+                        .height(60.dp)) {Text(text = "Pedir carta")}
+                    Button(onClick = {j.plantarse()}, modifier = Modifier
+                        .padding(10.dp)
+                        .padding(bottom = 20.dp)
+                        .width(120.dp)
+                        .height(60.dp)) {Text(text = "Plantarse")}
+                }
             }
         }
     }
 }
 
+@Composable
+fun ClassicGame(){}
+
+@Composable
+fun JugadorVsCpu(){}
+
+@Composable
+fun JugadorVsJugador(){}
+
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    BlackJackTheme {JugadorVsJugador()}
+    BlackJackTheme { TrainingMode() }
 }
