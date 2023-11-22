@@ -110,62 +110,7 @@ fun MenuView(){
  */
 @Composable
 fun TrainingMode(){
-    val j = Jugador()
-    var revealcard1 by rememberSaveable {mutableStateOf("reverso")}
-    var revealcard2 by rememberSaveable {mutableStateOf("reverso")}
-    val context = LocalContext.current
-    var start by remember {mutableStateOf(false)}
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .paint(
-            painter = painterResource(id = R.drawable.fondojuego),
-            contentScale = ContentScale.FillHeight
-        ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ){
-        Column(modifier = Modifier
-            .padding(bottom = 10.dp)
-            .padding(20.dp)
-            .fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally) {
-
-            //Título:
-            Row {
-                Text(text = "MODO ENTRENAMIENTO", Modifier.padding(30.dp), color = Color.White)
-            }
-            //Fila para las cartas:
-            Row(Modifier.padding(20.dp)){
-                if (!start){
-                    Button(onClick = { start = true }, modifier = Modifier
-                        .padding(10.dp)
-                        .padding(bottom = 20.dp)
-                        .width(200.dp)
-                        .height(80.dp)) { Text(text = "COMENZAR")}
-                }else{
-                    Box {revealcard1 = j.pedircarta(context)}
-                    Box {revealcard2 = j.pedircarta(context)}
-                }
-            }
-            //Fila para los botones de decisión:
-            Row {
-                if(!start){
-                    //Si no se ha pulsado el boton comenzar, los botones de pedir carta y plantarse no existirán
-                }else{
-                    Button(onClick = {j.pedircarta(context)}, modifier = Modifier
-                        .padding(10.dp)
-                        .padding(bottom = 20.dp)
-                        .width(120.dp)
-                        .height(60.dp)) {Text(text = "Pedir carta")}
-                    Button(onClick = {j.plantarse()}, modifier = Modifier
-                        .padding(10.dp)
-                        .padding(bottom = 20.dp)
-                        .width(120.dp)
-                        .height(60.dp)) {Text(text = "Plantarse")}
-                }
-            }
-        }
-    }
+    ModoEntrenamiento()
 }
 
 @Composable
