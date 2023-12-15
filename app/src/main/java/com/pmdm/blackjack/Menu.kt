@@ -27,7 +27,6 @@ import com.pmdm.blackjack.ui.theme.BlackJackTheme
 
 @Composable
 fun MenuView(navController: NavHostController){
-    var nav by remember { mutableIntStateOf(0) }
     Column(modifier = Modifier
         .fillMaxSize()
         .paint(

@@ -2,7 +2,6 @@ package com.pmdm.blackjack
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -81,8 +79,9 @@ fun ImprimeBucles(player1: Jugador, player2: Jugador, context: Context) {
 /**
  * Metodo que va actualizando nuestra carta
  */
+@SuppressLint("DiscouragedApi")
 @Composable
-fun UpdateCard(dorsoCarta: String, context: Context): Int {
+fun cardUpdater(dorsoCarta: String, context: Context): Int {
     return context.resources.getIdentifier(
         dorsoCarta,
         "drawable",
@@ -117,7 +116,7 @@ fun BlackJackGame() { //Aquí comienza la lógica del juego
 
 
     //Variable que controla si nuestros botones son pulsados para almacenar la opcion de pasar
-    var btnPasarP1IsClicked by remember { mutableStateOf(false) }
+    var btnPasarP1IsClicked by remember { mutableStateOf(true) }
     var btnPasarP2IsClicked by remember { mutableStateOf(false) }
 
     ImprimeBucles(player1 = J1, player2 = J2, context = context)
@@ -133,38 +132,20 @@ fun BlackJackGame() { //Aquí comienza la lógica del juego
         Row {
             SacarCartaJ2(onDameCartaClick = {
                 val carta = Baraja.cogerCarta()
-                if (turnoJ1 && !btnPasarP1IsClicked && puntosJ1 < 21) {
-                    reversoCarta = "c${carta.idDrawable}"
-                    J1.mano.add(carta.idDrawable)
-                    if (carta.puntosMin == 1) {
-                        if (puntosJ1 + carta.puntosMax < 21) puntosJ1 += carta.puntosMax else puntosJ1 += carta.puntosMin
-                    } else puntosJ1 += carta.puntosMin
-
-
-                } else if (turnoJ2 && !btnPasarP2IsClicked && puntosJ2 < 21) {
+                if (turnoJ2 && btnPasarP2IsClicked && puntosJ2 < 21) {
                     reversoCarta = "c${carta.idDrawable}"
                     J2.mano.add(carta.idDrawable)
-                    if (!btnPasarP1IsClicked) {
-                        turnoJ1 = true
-                        turnoJ2 = false
-                    }
                     if (carta.puntosMin == 1) {
                         if (puntosJ2 + carta.puntosMax < 21) puntosJ2 += carta.puntosMax else puntosJ2 += carta.puntosMin
                     } else puntosJ2 += carta.puntosMin
                 }
             })
-            pasar(onPasaClick = {
-                if (turnoJ1) {
-                    turnoJ1 = false
-                    turnoJ2 = true
-                    //definimos isClicked a false para que el jug no pueda pedir cartas de nuevo
-                    btnPasarP1IsClicked = true
-                } else if (turnoJ2) {
-                    turnoJ1 = true
-                    turnoJ2 = false
-                    //definimos isClicked a false para que el jug no pueda pedir cartas de nuevo
-                    btnPasarP2IsClicked = true
-                }
+            Pasar(onPasaClick = {
+                turnoJ1 = true
+                turnoJ2 = false
+                //definimos isClicked a false para que el jug no pueda pedir cartas de nuevo
+                btnPasarP2IsClicked = false
+                btnPasarP1IsClicked = true
             })
         }
 
@@ -177,58 +158,39 @@ fun BlackJackGame() { //Aquí comienza la lógica del juego
                     if (carta.puntosMin == 1) {
                         if (puntosJ1 + carta.puntosMax < 21) puntosJ1 += carta.puntosMax else puntosJ1 += carta.puntosMin
                     } else puntosJ1 += carta.puntosMin
-
-
-                } else if (turnoJ2 && !btnPasarP2IsClicked && puntosJ2 < 21) {
-                    reversoCarta = "c${carta.idDrawable}"
-                    J2.mano.add(carta.idDrawable)
-                    if (!btnPasarP1IsClicked) {
-                        turnoJ1 = true
-                        turnoJ2 = false
-                    }
-                    if (carta.puntosMin == 1) {
-                        if (puntosJ2 + carta.puntosMax < 21) puntosJ2 += carta.puntosMax else puntosJ2 += carta.puntosMin
-                    } else puntosJ2 += carta.puntosMin
                 }
             })
-            pasar(onPasaClick = {
-                if (turnoJ1) {
-                    turnoJ1 = false
-                    turnoJ2 = true
-                    //definimos isClicked a false para que el jug no pueda pedir cartas de nuevo
-                    btnPasarP1IsClicked = false
-                    btnPasarP2IsClicked = true
-                } else if (turnoJ2) {
-                    turnoJ1 = true
-                    turnoJ2 = false
-                    //definimos isClicked a false para que el jug no pueda pedir cartas de nuevo
-                    btnPasarP1IsClicked = true
-                    btnPasarP2IsClicked = false
-                }
+            Pasar(onPasaClick = {
+                turnoJ1 = false
+                turnoJ2 = true
+                //definimos isClicked a false para que el jug no pueda pedir cartas de nuevo
+                btnPasarP1IsClicked = false
+                btnPasarP2IsClicked = true
             })
         }
 
         PuntosTotales(puntPlayer1 = puntosJ1, puntPlayer2 = puntosJ2)
 
-        TurnoJugador(turnoJ1 = turnoJ1)
+        TurnoJ(turnoJ1 = turnoJ1)
 
-        PuntuacionesPartida(
-            puntPlayer1 = puntosJ1,
-            manoSizeP1 = manoJ1,
-            puntPlayer2 = puntosJ2,
-            manoSizeP2 = manoJ2,
-            btnPasarP1IsClicked,
-            btnPasarP2IsClicked
-        )
-
+        if(puntosJ2>=21 || puntosJ1>=21){
+            Puntuacion(
+                puntPlayer1 = puntosJ1,
+                manoSizeP1 = manoJ1,
+                puntPlayer2 = puntosJ2,
+                manoSizeP2 = manoJ2,
+                btnPasarP1IsClicked,
+                btnPasarP2IsClicked
+            )
+        }
 
     }
-    UpdateCard(dorsoCarta = reversoCarta, context = context)
+    cardUpdater(dorsoCarta = reversoCarta, context = context)
 }
 
 
 @Composable
-fun PuntuacionesPartida(
+fun Puntuacion(
     puntPlayer1: Int,
     manoSizeP1: MutableList<Int>,
     puntPlayer2: Int,
@@ -259,7 +221,7 @@ fun PuntuacionesPartida(
 
 //Funcion que nos muestra el turno de cada jugador
 @Composable
-fun TurnoJugador(turnoJ1: Boolean) {
+fun TurnoJ(turnoJ1: Boolean) {
     if (turnoJ1) {
         Row(Modifier.padding(30.dp)) {
             Text(text = "Turno Jugador 1")
@@ -291,7 +253,6 @@ fun PuntosTotales(puntPlayer1: Int, puntPlayer2: Int) {
     }
 }
 
-//Funcion lambda que al pulsar en el boton dame carta, obtiene una carta de la baraja
 @Composable
 fun SacarCartaJ1(onDameCartaClick: () -> Unit) {
     Row(Modifier.padding(10.dp)) {
@@ -313,7 +274,6 @@ fun SacarCartaJ1(onDameCartaClick: () -> Unit) {
     }
 }
 
-//Funcion lambda que al pulsar en el boton Sacar carta, obtiene una carta de la baraja
 @Composable
 fun SacarCartaJ2(onDameCartaClick: () -> Unit) {
     Row(Modifier.padding(10.dp)) {
@@ -336,7 +296,7 @@ fun SacarCartaJ2(onDameCartaClick: () -> Unit) {
 }
 
 @Composable
-fun pasar(onPasaClick: () -> Unit) {
+fun Pasar(onPasaClick: () -> Unit) {
     Row(Modifier.padding(10.dp)) {
         Button(
             onClick = {
