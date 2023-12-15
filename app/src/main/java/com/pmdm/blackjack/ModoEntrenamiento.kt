@@ -28,6 +28,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
+
+//Este es el modo que tenía antes de la explicacion de las screens:
 @SuppressLint("DiscouragedApi")
 @Composable
 fun ModoEntrenamiento(){
