@@ -5,7 +5,7 @@ package com.pmdm.blackjack
  */
 class Baraja {
     companion object{ // Usamos el Companion Object para no tener que inicializar las variables directamente en el constructor primario
-        private val cardlist : ArrayList<Carta> = arrayListOf()
+        private val cardlist = arrayListOf<Carta>()
         private var size = 0
         init {newDeck();shuffle()}
 
@@ -14,10 +14,17 @@ class Baraja {
          */
         fun newDeck(){
             cardlist.clear() // Eliminamos lo que pueda haber en la lista de cartas
-            for(v in Palos.values()){
-                for(j in Naipes.values()){
-                    val card = Carta(j,v,0,0,0)
-                    cardlist.add(card) // Vamos rellenando la lista con las cartas
+            val listaFiguras = listOf("c11","c12","c13","c24","c25","c26","c37","c38","c39","c50","c51","c52")
+            var idCarta = 1
+            for (palo in Palos.values()) {
+                for (numero in Naipes.values()) {
+                    val newCarta = Carta(numero, palo, numero.ordinal + 1, numero.ordinal + 1, idCarta)
+                    //Definimos a 10 todos los valores figuras (PARA BLACK JACK)
+                    if ("c$idCarta" in listaFiguras) newCarta.puntosMin = 10
+                    //Definimos el doble valor de AS
+                    if (numero.name == "AS") newCarta.puntosMax = 11
+                    cardlist.add(newCarta)
+                    idCarta++
                 }
             }
             size = cardlist.size // Actualizamos el tamaño de la lista
@@ -31,14 +38,6 @@ class Baraja {
         /**
          * Esta función mostrará una carta de la baraja si la baraja tiene como mínimo 1 carta:
          */
-        fun cogerCarta():Carta?{
-            if (cardlist.size>0){
-                val cardshown = cardlist.last() // Sacará la última carta de la lista
-                cardlist.remove(cardshown) // Eliminará la última de la lista para que no se repita despues
-                size = cardlist.size // Actualiza el tamaño de la lista de cartas
-                return cardshown
-            }
-            return null
-        }
+        fun cogerCarta() = cardlist.removeLast()
     }
 }

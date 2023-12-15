@@ -1,14 +1,7 @@
 package com.pmdm.blackjack
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-
-class Carta (nombre: Naipes, palo : Palos, private var puntosMin: Int, private var puntosMax: Int, var idDrawable:Int){
+class Carta (var nombre: Naipes, var palo: Palos, var puntosMin: Int = 0,
+             var puntosMax: Int = 0, var idDrawable: Int = 0){
     init { // Cuando se llame a esta clase, se ejecutará directamente esté código
         when {
             nombre.valor == 1 -> {puntosMax = 11;puntosMin = 1}
@@ -17,4 +10,6 @@ class Carta (nombre: Naipes, palo : Palos, private var puntosMin: Int, private v
         }
         idDrawable = nombre.valor + (palo.valor * 13)
     }
+    override fun toString(): String {
+        return "Carta(nombre=$nombre, palo=$palo, puntosMin=$puntosMin, puntosMax=$puntosMax, idDrawable=$idDrawable)"}
 }
